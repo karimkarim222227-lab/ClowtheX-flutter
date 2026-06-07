@@ -1,0 +1,33 @@
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.packages.lock
+.pub-cache/
+.buildlog
+.flutter-plugins-dependencies
+.flutter-plugins
+flutter_*.png
+# Android
+android/.gradle/
+android/local.properties
+android/app/*.keystore
+# iOS
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Pods/
+ios/Runner.xcworkspace/
+ios/Flutter/ephemeral/
+# Build
+build/
+# Generated files
+.dart_tool/
+pubspec.lock
+# macOS files
+*.DS_Store
+# Editor directories
+.idea/
+.vscode/
+# Misc
+*.log
