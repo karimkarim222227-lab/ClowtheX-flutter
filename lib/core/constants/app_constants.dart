@@ -2,7 +2,18 @@ class AppConstants {
   static const String appName = 'ClowtheX';
   static const String appVersion = '1.0.0';
   static const String dbName = 'clowthex.db';
-  static const int dbVersion = 1;
+  static const int dbVersion = 2;
+
+  // Sync Status
+  static const String syncStatusSynced = 'synced';
+  static const String syncStatusPending = 'pending';
+  static const String syncStatusDeleted = 'deleted_locally';
+
+  // Common Columns
+  static const String colUserId = 'userId';
+  static const String colSyncStatus = 'syncStatus';
+  static const String colLastUpdated = 'lastUpdated';
+  static const String colIsDeleted = 'isDeleted';
 
   // Tables
   static const String tableProducts = 'products';

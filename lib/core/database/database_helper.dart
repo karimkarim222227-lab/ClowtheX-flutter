@@ -34,7 +34,12 @@ class DatabaseHelper {
         description TEXT,
         color TEXT,
         icon TEXT,
-        created_at TEXT NOT NULL,
+        
+              userId TEXT DEFAULT 'guest',
+              syncStatus TEXT DEFAULT 'pending',
+              lastUpdated TEXT,
+              isDeleted INTEGER DEFAULT 0,
+              created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
       )
     ''');
@@ -48,7 +53,12 @@ class DatabaseHelper {
         address TEXT,
         notes TEXT,
         balance REAL DEFAULT 0,
-        created_at TEXT NOT NULL,
+        
+              userId TEXT DEFAULT 'guest',
+              syncStatus TEXT DEFAULT 'pending',
+              lastUpdated TEXT,
+              isDeleted INTEGER DEFAULT 0,
+              created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
       )
     ''');
@@ -63,7 +73,12 @@ class DatabaseHelper {
         notes TEXT,
         total_purchases REAL DEFAULT 0,
         loyalty_points INTEGER DEFAULT 0,
-        created_at TEXT NOT NULL,
+        
+              userId TEXT DEFAULT 'guest',
+              syncStatus TEXT DEFAULT 'pending',
+              lastUpdated TEXT,
+              isDeleted INTEGER DEFAULT 0,
+              created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
       )
     ''');
@@ -86,7 +101,12 @@ class DatabaseHelper {
         brand TEXT,
         image_path TEXT,
         is_active INTEGER DEFAULT 1,
-        created_at TEXT NOT NULL,
+        
+              userId TEXT DEFAULT 'guest',
+              syncStatus TEXT DEFAULT 'pending',
+              lastUpdated TEXT,
+              isDeleted INTEGER DEFAULT 0,
+              created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
         FOREIGN KEY (category_id) REFERENCES ${AppConstants.tableCategories}(id),
         FOREIGN KEY (supplier_id) REFERENCES ${AppConstants.tableSuppliers}(id)
@@ -109,7 +129,12 @@ class DatabaseHelper {
         payment_method TEXT DEFAULT 'cash',
         notes TEXT,
         status TEXT DEFAULT 'completed',
-        created_at TEXT NOT NULL,
+        
+              userId TEXT DEFAULT 'guest',
+              syncStatus TEXT DEFAULT 'pending',
+              lastUpdated TEXT,
+              isDeleted INTEGER DEFAULT 0,
+              created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
         FOREIGN KEY (customer_id) REFERENCES ${AppConstants.tableCustomers}(id)
       )
@@ -128,7 +153,12 @@ class DatabaseHelper {
         discount REAL DEFAULT 0,
         total REAL NOT NULL,
         created_at TEXT NOT NULL,
-        FOREIGN KEY (sale_id) REFERENCES ${AppConstants.tableSales}(id) ON DELETE CASCADE,
+        
+              userId TEXT DEFAULT 'guest',
+              syncStatus TEXT DEFAULT 'pending',
+              lastUpdated TEXT,
+              isDeleted INTEGER DEFAULT 0,
+              FOREIGN KEY (sale_id) REFERENCES ${AppConstants.tableSales}(id) ON DELETE CASCADE,
         FOREIGN KEY (product_id) REFERENCES ${AppConstants.tableProducts}(id)
       )
     ''');
@@ -142,7 +172,12 @@ class DatabaseHelper {
         category TEXT,
         notes TEXT,
         date TEXT NOT NULL,
-        created_at TEXT NOT NULL
+        
+              userId TEXT DEFAULT 'guest',
+              syncStatus TEXT DEFAULT 'pending',
+              lastUpdated TEXT,
+              isDeleted INTEGER DEFAULT 0,
+              created_at TEXT NOT NULL
       )
     ''');
 
@@ -165,7 +200,12 @@ class DatabaseHelper {
         is_paid INTEGER DEFAULT 0,
         paid_date TEXT,
         notes TEXT,
-        created_at TEXT NOT NULL,
+        
+              userId TEXT DEFAULT 'guest',
+              syncStatus TEXT DEFAULT 'pending',
+              lastUpdated TEXT,
+              isDeleted INTEGER DEFAULT 0,
+              created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
       )
     ''');
@@ -182,7 +222,12 @@ class DatabaseHelper {
         is_paid INTEGER DEFAULT 0,
         paid_date TEXT,
         notes TEXT,
-        created_at TEXT NOT NULL,
+        
+              userId TEXT DEFAULT 'guest',
+              syncStatus TEXT DEFAULT 'pending',
+              lastUpdated TEXT,
+              isDeleted INTEGER DEFAULT 0,
+              created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
       )
     ''');
@@ -273,6 +318,11 @@ class DatabaseHelper {
               is_paid INTEGER DEFAULT 0,
               paid_date TEXT,
               notes TEXT,
+              
+              userId TEXT DEFAULT 'guest',
+              syncStatus TEXT DEFAULT 'pending',
+              lastUpdated TEXT,
+              isDeleted INTEGER DEFAULT 0,
               created_at TEXT NOT NULL,
               updated_at TEXT NOT NULL
             )
@@ -292,6 +342,11 @@ class DatabaseHelper {
               is_paid INTEGER DEFAULT 0,
               paid_date TEXT,
               notes TEXT,
+              
+              userId TEXT DEFAULT 'guest',
+              syncStatus TEXT DEFAULT 'pending',
+              lastUpdated TEXT,
+              isDeleted INTEGER DEFAULT 0,
               created_at TEXT NOT NULL,
               updated_at TEXT NOT NULL
             )
@@ -321,7 +376,11 @@ class DatabaseHelper {
   Future<String> insert(String table, Map<String, dynamic> data) async {
     try {
       final db = await database;
+      
+      data[AppConstants.colLastUpdated] = DateTime.now().toIso8601String();
+      data[AppConstants.colSyncStatus] = AppConstants.syncStatusPending;
       await db.insert(table, data, conflictAlgorithm: ConflictAlgorithm.replace);
+
       return data['id'] as String;
     } catch (e, st) {
       debugPrint('DB insert error on $table: $e');
@@ -333,7 +392,11 @@ class DatabaseHelper {
   Future<int> update(String table, Map<String, dynamic> data, String id) async {
     try {
       final db = await database;
+      
+      data[AppConstants.colLastUpdated] = DateTime.now().toIso8601String();
+      data[AppConstants.colSyncStatus] = AppConstants.syncStatusPending;
       return await db.update(table, data, where: 'id = ?', whereArgs: [id]);
+
     } catch (e, st) {
       debugPrint('DB update error on $table id=$id: $e');
       debugPrint(st.toString());

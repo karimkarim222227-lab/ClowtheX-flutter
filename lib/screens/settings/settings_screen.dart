@@ -8,11 +8,33 @@ import '../backup/backup_screen.dart';
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLastSync();
+  }
+
+  Future<void> _loadLastSync() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastSync = prefs.getString('last_sync_time');
+    if (lastSync != null) {
+      setState(() {
+        _lastSync = DateTime.parse(lastSync).toString().split('.')[0];
+      });
+    }
+  }
+
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+
+  String _lastSync = 'لم تتم المزامنة بعد';
+  bool _isSyncing = false;
+  final SyncService _syncService = SyncService();
+
   late final TextEditingController _storeName;
   late final TextEditingController _storePhone;
   late final TextEditingController _storeAddress;
@@ -21,6 +43,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late final TextEditingController _lowStock;
   bool _taxEnabled = false;
   bool _initialized = false;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLastSync();
+  }
+
+  Future<void> _loadLastSync() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastSync = prefs.getString('last_sync_time');
+    if (lastSync != null) {
+      setState(() {
+        _lastSync = DateTime.parse(lastSync).toString().split('.')[0];
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -31,6 +70,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _currency = TextEditingController();
     _taxRate = TextEditingController();
     _lowStock = TextEditingController();
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLastSync();
+  }
+
+  Future<void> _loadLastSync() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastSync = prefs.getString('last_sync_time');
+    if (lastSync != null) {
+      setState(() {
+        _lastSync = DateTime.parse(lastSync).toString().split('.')[0];
+      });
+    }
   }
 
   @override
@@ -49,12 +105,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLastSync();
+  }
+
+  Future<void> _loadLastSync() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastSync = prefs.getString('last_sync_time');
+    if (lastSync != null) {
+      setState(() {
+        _lastSync = DateTime.parse(lastSync).toString().split('.')[0];
+      });
+    }
+  }
+
   @override
   void dispose() {
     for (final c in [_storeName, _storePhone, _storeAddress, _currency, _taxRate, _lowStock]) {
       c.dispose();
     }
     super.dispose();
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLastSync();
+  }
+
+  Future<void> _loadLastSync() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastSync = prefs.getString('last_sync_time');
+    if (lastSync != null) {
+      setState(() {
+        _lastSync = DateTime.parse(lastSync).toString().split('.')[0];
+      });
+    }
   }
 
   @override
@@ -113,6 +203,60 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
           const SizedBox(height: 20),
+
+          
+          const SizedBox(height: 20),
+          _sectionTitle('المزامنة السحابية'),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.cardBorder)),
+            child: Column(children: [
+              _infoRow('آخر مزامنة ناجحة', _lastSync),
+              const SizedBox(height: 16),
+              Row(children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _isSyncing ? null : () async {
+                      setState(() => _isSyncing = true);
+                      await _syncService.syncData();
+                      await _loadLastSync();
+                      setState(() => _isSyncing = false);
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تمت المزامنة بنجاح')));
+                    },
+                    icon: _isSyncing ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.sync),
+                    label: const Text('مزامنة الآن', style: TextStyle(fontFamily: 'Cairo')),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('استعادة البيانات'),
+                          content: const Text('سيتم استبدال البيانات المحلية بالبيانات السحابية. هل أنت متأكد؟'),
+                          actions: [
+                            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('إلغاء')),
+                            TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('تأكيد')),
+                          ],
+                        ),
+                      );
+                      if (confirm == true) {
+                        setState(() => _isSyncing = true);
+                        await _syncService.restoreFromCloud();
+                        await _loadLastSync();
+                        setState(() => _isSyncing = false);
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تمت استعادة البيانات بنجاح')));
+                      }
+                    },
+                    icon: const Icon(Icons.cloud_download_outlined),
+                    label: const Text('استعادة', style: TextStyle(fontFamily: 'Cairo')),
+                  ),
+                ),
+              ]),
+            ]),
+          ),
 
           _sectionTitle('معلومات التطبيق'),
           Container(
