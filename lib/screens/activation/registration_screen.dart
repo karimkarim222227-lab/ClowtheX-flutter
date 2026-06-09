@@ -23,7 +23,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         password: _passwordController.text.trim(),
       );
       if (mounted) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+        if (mounted) Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('خطأ في التسجيل: $e')));
@@ -66,7 +66,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
             ),
             TextButton(
-              onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen())),
+              onPressed: () => if (mounted) Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen())),
               child: const Text('تخطي الآن والعمل محلياً', style: TextStyle(color: AppColors.gold)),
             ),
           ],

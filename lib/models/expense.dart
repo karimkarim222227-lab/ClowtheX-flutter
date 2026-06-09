@@ -16,7 +16,6 @@ extension ExpenseTypeExtension on ExpenseType {
       case ExpenseType.other:
         return 'أخرى';
       case ExpenseType.general:
-      default:
         return 'عام';
     }
   }
@@ -34,7 +33,6 @@ extension ExpenseTypeExtension on ExpenseType {
       case ExpenseType.other:
         return '🔧';
       case ExpenseType.general:
-      default:
         return '💰';
     }
   }
@@ -108,7 +106,6 @@ class Expense {
       case 'other':
         return ExpenseType.other;
       case 'general':
-      default:
         return ExpenseType.general;
     }
   }

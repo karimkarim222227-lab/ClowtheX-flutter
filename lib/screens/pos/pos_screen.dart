@@ -721,11 +721,11 @@ class _CartSheetState extends State<_CartSheet> {
     } catch (e) {
       if (mounted) {
         String msg = 'فشل إتمام البيع';
-        if (e.toString().contains('السلة فارغة')) msg = 'السلة فارغة';
-        else if (e.toString().contains('المبلغ المدفوع')) msg = 'المبلغ المدفوع أقل من الإجمالي';
-        else if (e.toString().contains('الكمية المطلوبة')) msg = e.toString();
-        else if (e.toString().contains('المنتج غير موجود')) msg = e.toString();
-        else msg = 'حدث خطأ: ${e.toString()}';
+        if (e.toString().contains('السلة فارغة')) { msg = 'السلة فارغة'; }
+        else if (e.toString().contains('المبلغ المدفوع')) { msg = 'المبلغ المدفوع أقل من الإجمالي'; }
+        else if (e.toString().contains('الكمية المطلوبة')) { msg = e.toString(); }
+        else if (e.toString().contains('المنتج غير موجود')) { msg = e.toString(); }
+        else { msg = 'حدث خطأ: ${e.toString()}'; }
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
